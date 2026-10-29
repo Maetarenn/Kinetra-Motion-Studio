@@ -1,6 +1,5 @@
 <p align="center">
-  <img src="Kinetra-Motion-Studio/Kinetra/kinetra/assets
-/logo.png" width="620" alt="Kinetra Motion Studio">
+  <img src="Kinetra/kinetra/assets/logo.png?v=2" width="620" alt="Kinetra Motion Studio">
 </p>
 
 <p align="center">
@@ -240,4 +239,3 @@ For studio collaborations, VFX & game production inquiries, or technical questio
 <p align="center">
   <em>Kinetra Motion Studio — Designed with passion for the future of cinema, gaming, and digital performance.</em>
 </p>
-
