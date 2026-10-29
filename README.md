@@ -1,7 +1,6 @@
 <p align="center">
-  <img src="kinetra/assets/logo.png" width="560" alt="Kinetra Motion Studio Banner">
+  <img src="kinetra/assets/logo.png" width="620" alt="Kinetra Motion Studio">
 </p>
-<h1 align="center">Kinetra Motion Studio</h1>
 <p align="center">
   <strong>Next-Generation Markerless AI Motion Capture & Virtual Production Engine</strong>
   <br>
@@ -16,15 +15,16 @@
   <img src="https://img.shields.io/badge/Tests-72_Passed_%7C_100%25-00C853?style=for-the-badge" alt="Tests Passed">
   <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows">
 </p>
----
+<br>
 <p align="center">
-  <!-- HERO SHOWCASE GIF PLACEHOLDER -->
-  <img src="kinetra/assets/demo_showcase.gif" width="850" alt="Kinetra Live Performance Demo" onerror="this.src='kinetra/assets/logo.png'; this.style.maxWidth='450px';">
+  <img src="kinetra/assets/demo_showcase.gif" width="760" alt="Kinetra Live Performance Demo">
   <br>
-  <em>Live performance capture: 52-joint body kinematics, 52 ARKit facial blendshapes, finger solver, and color-tape weapon tracking.</em>
+  <em>Live 60 FPS performance capture: 52-joint body kinematics, 52 ARKit facial blendshapes, finger solver, and real-time streaming.</em>
 </p>
+<br>
 ---
 ## 📌 Executive Summary
-**Kinetra Motion Studio** is an open, next-generation, **markerless motion capture and virtual production suite** engineered to eliminate the prohibitive costs of specialized optical rigs (such as $50,000+ Vicon or OptiTrack setups) and cumbersome sensor suits. 
+**Kinetra Motion Studio** is an open, next-generation, **markerless motion capture and virtual production suite** engineered to eliminate the prohibitive costs of specialized optical rigs (such as \$50,000+ Vicon or OptiTrack setups) and cumbersome sensor suits.
 Operating entirely on **standard off-the-shelf webcams, smartphones, or recorded video feeds**, Kinetra delivers sub-millisecond, biomechanically constrained, studio-grade motion capture tailored for Hollywood visual effects pipelines, Unreal Engine 5 virtual production, video game developers, and solo 3D animators.
+<br>
 ---
