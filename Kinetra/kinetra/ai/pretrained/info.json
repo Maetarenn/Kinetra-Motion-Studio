@@ -1,0 +1,8 @@
+{
+ "hand_samples": 40000,
+ "body_sequences": 250,
+ "windows": 40000,
+ "epochs": 25,
+ "bvh": null,
+ "project": null
+}

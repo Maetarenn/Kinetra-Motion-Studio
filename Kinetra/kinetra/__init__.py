@@ -1,0 +1,5 @@
+"""Kinetra Motion Studio - markerless body + face motion capture (single and multi camera)."""
+APP_NAME = "Kinetra"
+APP_TAGLINE = "Motion Studio"
+APP_VERSION = "0.4.0"
+ORG_NAME = "Kinetra"

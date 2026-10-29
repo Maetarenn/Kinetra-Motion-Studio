@@ -1,0 +1,7 @@
+Kinetra Motion Studio - Copyright (c) 2026. All rights reserved.
+
+This is a placeholder for your commercial licence. Before selling the software:
+  * choose the real licence terms (EULA / subscription),
+  * review the licences of every dependency and model (PySide6 LGPL, MediaPipe Apache-2.0, OpenCV Apache-2.0,
+    PyOpenGL BSD, and any SMPL-family model you may add later, which is non-commercial by default),
+  * run a trademark search for the name "Kinetra" in your target markets and classes.
