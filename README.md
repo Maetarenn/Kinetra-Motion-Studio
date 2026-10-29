@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Kinetra/kinetra/assets/logo.png" width="620" alt="Kinetra Motion Studio">
+  <img src="Kinetra-Motion-Stuido/Kinetra/kinetra/assets/logo.png" width="620" alt="Kinetra Motion Studio">
 </p>
 
 <p align="center">
