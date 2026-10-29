@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kinetra"
+version = "0.4.0"
+description = "Kinetra Motion Studio - markerless body + face motion capture, single and multi camera"
+readme = "README.md"
+requires-python = ">=3.9,<3.13"
+license = { text = "Proprietary" }
+dependencies = ["PySide6>=6.6", "PyOpenGL>=3.1.7", "numpy>=1.24", "opencv-python>=4.8", "mediapipe>=0.10.14", "psutil>=5.9"]
+
+[project.optional-dependencies]
+gpu-stats = ["nvidia-ml-py>=12.0"]
+characters = ["pygltflib>=1.16"]
+dev = ["pytest>=8", "usd-core"]
+
+[project.gui-scripts]
+kinetra = "kinetra.app:main"
+
+[tool.setuptools.packages.find]
+include = ["kinetra*"]
+
+[tool.setuptools.package-data]
+kinetra = ["assets/*", "locales/*.json", "ai/pretrained/*"]

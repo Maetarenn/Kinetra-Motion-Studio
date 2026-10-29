@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.dylib
+
+# C++ build artifacts
+*.obj
+*.exp
+*.lib
+build/
+
+# PyInstaller & Exe outputs
+dist/
+*.spec
+installer_output/
+*.exe
+*.msi
+*.zip
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# User recordings & local takes
+*.take
+takes/
+Kinetra_Captures/
