@@ -28,7 +28,39 @@ def open_capture(source, preset):
     return cap, f"{int(cap.get(3))}x{int(cap.get(4))} @ {cap.get(cv2.CAP_PROP_FPS):.0f} fps (driver)"
 
 
-def scan_cameras(max_index=6):
+def get_camera_devices():
+    """Returns a list of dicts: [{'index': int, 'name': str, 'description': str}]"""
+    devices = []
+    try:
+        from PySide6.QtMultimedia import QMediaDevices
+        inputs = QMediaDevices.videoInputs()
+        for idx, cam in enumerate(inputs):
+            desc = cam.description() or f"Kamera {idx}"
+            devices.append({
+                "index": idx,
+                "name": desc,
+                "description": f"[{idx}] {desc}"
+            })
+    except Exception:
+        pass
+
+    if not devices:
+        for idx in range(32):
+            cap, info = open_capture(idx, "640x480 @60")
+            if cap is not None:
+                devices.append({
+                    "index": idx,
+                    "name": f"Kamera {idx} ({info.split('@')[0].strip() if '@' in info else ''})",
+                    "description": f"[{idx}] Kamera {idx}"
+                })
+                cap.release()
+    return devices
+
+
+def scan_cameras(max_index=32):
+    devs = get_camera_devices()
+    if devs:
+        return [d["index"] for d in devs]
     found = []
     for i in range(max_index):
         cap, _ = open_capture(i, "640x480 @60")

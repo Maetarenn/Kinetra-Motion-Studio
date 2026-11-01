@@ -24,6 +24,8 @@ from ..ai.hand_prior import hand_features, features_to_quats, finger_confidence
 from ..core.anatomy import apply_limits, bone_axes
 from ..core.body_solver import BodySolver
 from ..core.constants import HIP_MID, NBS
+from ..core.wrinkle_solver import WrinkleSolver
+from .iphone_receiver import IPhoneTrueDepthReceiver
 from ..core.exporters import Streamer
 from ..core.fullbody import JOINT_ORDER_V2, assemble, build_skeleton, forward_kinematics
 from ..core.hand import HandSolver
@@ -63,6 +65,11 @@ class CaptureConfig:
     focal_factor: float = 0.9
     beta: float = 5.0
     f_min: float = 1.0
+    stream_on: bool = False
+    stream_port: int = 11111
+    stream_fmt: str = "ue5_livelink"
+    use_iphone: bool = False
+    iphone_port: int = 49983
 
 
 def estimate_root(img, wld, frame_w, frame_h, focal_factor, cam_z=3.4):
@@ -114,6 +121,8 @@ class CaptureWorker(QtCore.QThread):
         self.lipsync = AudioLipSync(enabled=getattr(cfg, 'audio_lipsync', True))
         self.auto_sync = MultiCamAutoSync(focal_factor=cfg.focal_factor)
         self.recorder.order = JOINT_ORDER_V2
+        self.wrinkle_solver = WrinkleSolver()
+        self.iphone_receiver = IPhoneTrueDepthReceiver(port=getattr(cfg, 'iphone_port', 49983))
 
     # -- commands from the UI ---------------------------------------------------------------------
     def set_prop_config(self, kind=None, color=None, side=None, enabled=None):
@@ -367,7 +376,13 @@ class CaptureWorker(QtCore.QThread):
                 self._msg("log.ai_ready", int(bp is not None), int(hp is not None))
             except Exception as exc:
                 self._msg("log.fault", f"AI: {exc}")
-        self.streamer.configure()
+        if getattr(self.cfg, 'stream_on', False):
+            self.streamer.configure(port=getattr(self.cfg, 'stream_port', 11111), fmt=getattr(self.cfg, 'stream_fmt', 'ue5_livelink'))
+            self.streamer.enabled = True
+        else:
+            self.streamer.configure()
+        if getattr(self.cfg, 'use_iphone', False):
+            self.iphone_receiver.start_listening()
         if getattr(cfg, 'audio_lipsync', True):
             self.lipsync.start()
         pool = ThreadPoolExecutor(max_workers=2 * len(self.sources) + 1)
@@ -411,6 +426,8 @@ class CaptureWorker(QtCore.QThread):
                 except Exception:
                     pass
             self.streamer.close()
+            if hasattr(self, 'iphone_receiver') and self.iphone_receiver and self.iphone_receiver.running:
+                self.iphone_receiver.stop_listening()
             self.state.emit("STOPPED")
 
     def _process(self, pool, idx, items, t_cap, skew, consumed):
@@ -587,8 +604,23 @@ class CaptureWorker(QtCore.QThread):
                               None if res_j is None else res_j[HIP_MID], res["quats_full"], primary,
                               res.get("absolute", False), res.get("lengths"), hands_raw, self.skel,
                               res["faces"][0]["L"] if res["faces"] else None)
-        if self.streamer.enabled and res["quats_full"] is not None:
-            self.streamer.send(idx, res["joints"][HIP_MID], res["quats_full"], [p["bs"] for p in res["faces"]], prop=res.get("prop"))
+        if hasattr(self, 'iphone_receiver') and self.iphone_receiver and self.iphone_receiver.running:
+            ip_bs, ip_hq, ip_active = self.iphone_receiver.get_latest()
+            if ip_active:
+                primary = ip_bs
+                if not res["faces"]:
+                    res["faces"] = [{"bs": ip_bs, "neutral": np.zeros(52), "L": None, "source": "iphone"}]
+                else:
+                    res["faces"][0]["bs"] = ip_bs
+
+        primary_bs = primary if primary is not None else (res["faces"][0]["bs"] if res["faces"] else np.zeros(NBS))
+        res["wrinkles"] = self.wrinkle_solver.solve(primary_bs, landmarks_3d=res["faces"][0]["L"] if res["faces"] else None)
+
+        if self.streamer.enabled and (res.get("quats_full") is not None or res.get("faces")):
+            mh_curves = self.wrinkle_solver.get_metahuman_curves(res["wrinkles"])
+            res_j = res.get("joints")
+            root_pos = res_j[HIP_MID] if (res_j is not None and HIP_MID < len(res_j)) else [0.0, 0.0, 0.0]
+            self.streamer.send(idx, root_pos, res.get("quats_full"), [p["bs"] for p in res["faces"]], prop=res.get("prop"), wrinkles=mh_curves)
         with self._vlock:
             if self._video is not None:
                 self._write_video(frames, t_cap)

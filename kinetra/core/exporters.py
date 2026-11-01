@@ -181,11 +181,63 @@ KINETRA_TO_UE5_BONES = {
     'pinky_1_R': 'pinky_01_r', 'pinky_2_R': 'pinky_02_r', 'pinky_3_R': 'pinky_03_r',
 }
 
+
+
+# ARKit blendshape order for UE5 LiveLink binary protocol (version 6)
+ARKIT_BS_ORDER = [
+    'eyeBlinkLeft','eyeLookDownLeft','eyeLookInLeft','eyeLookOutLeft','eyeLookUpLeft',
+    'eyeSquintLeft','eyeWideLeft','eyeBlinkRight','eyeLookDownRight','eyeLookInRight',
+    'eyeLookOutRight','eyeLookUpRight','eyeSquintRight','eyeWideRight',
+    'jawForward','jawLeft','jawRight','jawOpen',
+    'mouthClose','mouthFunnel','mouthPucker','mouthLeft','mouthRight',
+    'mouthSmileLeft','mouthSmileRight','mouthFrownLeft','mouthFrownRight',
+    'mouthDimpleLeft','mouthDimpleRight','mouthStretchLeft','mouthStretchRight',
+    'mouthRollLower','mouthRollUpper','mouthShrugLower','mouthShrugUpper',
+    'mouthPressLeft','mouthPressRight','mouthLowerDownLeft','mouthLowerDownRight',
+    'mouthUpperUpLeft','mouthUpperUpRight',
+    'browDownLeft','browDownRight','browInnerUp','browOuterUpLeft','browOuterUpRight',
+    'cheekPuff','cheekSquintLeft','cheekSquintRight',
+    'noseSneerLeft','noseSneerRight','tongueOut',
+]
+_arkit_map = None
+
+def _arkit_mapping():
+    global _arkit_map
+    if _arkit_map is None:
+        idx = {n: i for i, n in enumerate(BLENDSHAPE_NAMES)}
+        _arkit_map = [idx.get(n, -1) for n in ARKIT_BS_ORDER]
+    return _arkit_map
+
+def _build_arkit_packet(device_id, subject, frame_idx, fps, bs_vals, wrinkles=None):
+    """Build ARKit LiveLink binary packet (v6) for UE5 Apple ARKit source."""
+    mp = _arkit_mapping()
+    data = bytearray()
+    data.append(6)
+    dev = device_id.encode('utf-8')
+    data.extend(struct.pack('<I', len(dev)))
+    data.extend(dev)
+    subj = subject.encode('utf-8')
+    data.extend(struct.pack('<I', len(subj)))
+    data.extend(subj)
+    data.extend(struct.pack('<IIII', frame_idx % (2**32), 0, fps, 1))
+    vals = [0.0] * 61
+    for ai, ki in enumerate(mp):
+        if 0 <= ki < len(bs_vals):
+            vals[ai] = float(bs_vals[ki])
+    if wrinkles and isinstance(wrinkles, dict):
+        for i, v in enumerate(list(wrinkles.values())[:9]):
+            vals[min(52 + i, 60)] = float(v)
+    data.append(61)
+    for v in vals:
+        data.extend(struct.pack('<f', v))
+    return bytes(data)
+
 class Streamer:
     """Real-time output of bone quaternions and blendshapes as UDP/JSON or OSC."""
 
     def __init__(self):
         self.enabled, self.fmt, self.addr = False, "json", ("127.0.0.1", 9000)
+        self._body_sock = None
         self._sock = None
 
     def configure(self, host="127.0.0.1", port=9000, fmt="json"):
@@ -197,52 +249,62 @@ class Streamer:
         if self._sock:
             self._sock.close()
             self._sock = None
+        if self._body_sock:
+            self._body_sock.close()
+            self._body_sock = None
 
-    def send(self, idx, root, quats, faces, prop=None):
+    def send(self, idx, root, quats, faces, prop=None, wrinkles=None):
         """Sends real-time frame to Unreal Engine 5 LiveLink, VMC, OSC or JSON."""
-        if not self.enabled or self._sock is None or quats is None:
+        if not self.enabled or self._sock is None:
             return
         try:
             if self.fmt == "ue5_livelink":
-                # UE5 Coordinate transform: Kinetra (Y-up, Z-fwd in metres) -> Unreal Engine (Z-up, X-fwd, Y-right in cm)
-                ue_root = [round(float(root[2] * 100.0), 3), round(float(root[0] * 100.0), 3), round(float(root[1] * 100.0), 3)]
-                ue_bones = {}
-                for k, q in quats.items():
-                    ue_name = KINETRA_TO_UE5_BONES.get(k, k)
-                    ue_bones[ue_name] = [round(float(q[3]), 6), round(float(q[1]), 6), round(float(q[2]), 6), round(float(q[0]), 6)]
-                if prop is not None and getattr(prop, 'quat', None) is not None:
-                    pq = prop.quat
-                    ue_bones['weapon_r' if getattr(prop, 'side', 'R') == 'R' else 'weapon_l'] = [
-                        round(float(pq[3]), 6), round(float(pq[1]), 6), round(float(pq[2]), 6), round(float(pq[0]), 6)
-                    ]
-                bs_dict = {}
+                # Face: ARKit binary protocol (native UE5 Apple ARKit LiveLink)
                 if faces and len(faces) > 0:
-                    for i, name in enumerate(BLENDSHAPE_NAMES):
-                        v = float(faces[0][i])
-                        bs_dict[name] = round(v, 4)
-                        bs_dict[name[0].upper() + name[1:]] = round(v, 4)
-                pkt = {
-                    'version': 1, 'subject': 'Kinetra_Actor', 'frame': idx, 'time': time.time(),
-                    'root': ue_root, 'bones': ue_bones, 'blendshapes': bs_dict
-                }
-                self._sock.sendto(json.dumps(pkt).encode('utf-8'), self.addr)
+                    pkt = _build_arkit_packet("Kinetra", "Kinetra_Face", idx, 60, faces[0], wrinkles)
+                    self._sock.sendto(pkt, self.addr)
+                # Body: JSON on port+1 for UE5 custom receiver
+                if quats:
+                    ue_root = [round(float(root[2]*100.0),3), round(float(root[0]*100.0),3), round(float(root[1]*100.0),3)] if root is not None else [0.0,0.0,0.0]
+                    ue_bones = {}
+                    for k, q in quats.items():
+                        ue_name = KINETRA_TO_UE5_BONES.get(k, k)
+                        ue_bones[ue_name] = [round(float(q[3]),6), round(float(q[1]),6), round(float(q[2]),6), round(float(q[0]),6)]
+                    if prop is not None and getattr(prop, 'quat', None) is not None:
+                        pq = prop.quat
+                        ue_bones['weapon_r' if getattr(prop, 'side', 'R') == 'R' else 'weapon_l'] = [
+                            round(float(pq[3]),6), round(float(pq[1]),6), round(float(pq[2]),6), round(float(pq[0]),6)]
+                    body_pkt = json.dumps({'v':1,'s':'Kinetra_Body','f':idx,'r':ue_root,'b':ue_bones}).encode('utf-8')
+                    if self._body_sock is None:
+                        self._body_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    self._body_sock.sendto(body_pkt, (self.addr[0], self.addr[1] + 1))
             elif self.fmt == "vmc":
-                msgs = [osc_message('/VMC/Ext/Root/Pos', [float(root[0]), float(root[1]), float(root[2]), 0.0, 0.0, 0.0, 1.0])]
-                for k, q in quats.items():
-                    msgs.append(osc_message(f'/VMC/Ext/Bone/{k}', [0.0, 0.0, 0.0, float(q[1]), float(q[2]), float(q[3]), float(q[0])]))
+                msgs = []
+                if root is not None:
+                    msgs.append(osc_message('/VMC/Ext/Root/Pos', [float(root[0]), float(root[1]), float(root[2]), 0.0, 0.0, 0.0, 1.0]))
+                if quats:
+                    for k, q in quats.items():
+                        msgs.append(osc_message(f'/VMC/Ext/Bone/{k}', [0.0, 0.0, 0.0, float(q[1]), float(q[2]), float(q[3]), float(q[0])]))
                 if faces and len(faces) > 0:
                     for i, name in enumerate(BLENDSHAPE_NAMES[:24]):
                         msgs.append(osc_message(f'/VMC/Ext/Blend/{name}', [float(faces[0][i])]))
+                if wrinkles and isinstance(wrinkles, dict):
+                    for w_name, w_val in list(wrinkles.items())[:6]:
+                        msgs.append(osc_message(f'/VMC/Ext/Blend/{w_name}', [float(w_val)]))
                 msgs.append(osc_message('/VMC/Ext/OK', [1.0]))
                 self._sock.sendto(osc_bundle(msgs), self.addr)
             elif self.fmt == "osc":
-                msgs = [osc_message("/kinetra/root", [float(v) for v in root])]
-                msgs += [osc_message(f"/kinetra/bone/{k}", [float(x) for x in q]) for k, q in quats.items()]
-                msgs += [osc_message(f"/kinetra/face/{i}", [float(x) for x in bs]) for i, bs in enumerate(faces)]
+                msgs = []
+                if root is not None:
+                    msgs.append(osc_message("/kinetra/root", [float(v) for v in root]))
+                if quats:
+                    msgs += [osc_message(f"/kinetra/bone/{k}", [float(x) for x in q]) for k, q in quats.items()]
+                if faces:
+                    msgs += [osc_message(f"/kinetra/face/{i}", [float(x) for x in bs]) for i, bs in enumerate(faces)]
                 self._sock.sendto(osc_bundle(msgs), self.addr)
             else:
-                pkt = {"frame": idx, "t": time.time(), "root": [round(float(v), 5) for v in root],
-                       "bones": {k: [round(float(x), 6) for x in q] for k, q in quats.items()},
+                pkt = {"frame": idx, "t": time.time(), "root": [round(float(v), 5) for v in root] if root is not None else [0.0, 0.0, 0.0],
+                       "bones": {k: [round(float(x), 6) for x in q] for k, q in quats.items()} if quats else {},
                        "faces": [{k: round(float(v), 4) for k, v in zip(BLENDSHAPE_NAMES, bs)} for bs in faces]}
                 if faces:
                     pkt["blendshapes"] = pkt["faces"][0]

@@ -24,7 +24,7 @@ class TakeExportDialog(QtWidgets.QDialog):
 
         # Header with green checkmark / success banner
         hdr = QtWidgets.QHBoxLayout()
-        icon_lbl = QtWidgets.QLabel("🎬")
+        icon_lbl = QtWidgets.QLabel("")
         icon_lbl.setStyleSheet("font-size: 32px;")
         hdr.addWidget(icon_lbl)
 

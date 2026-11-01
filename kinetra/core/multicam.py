@@ -125,6 +125,48 @@ class Rig:
         d = json.loads(Path(path).read_text())
         return cls([CameraModel.from_dict(c) for c in d["cameras"]], d.get("rms"))
 
+    @classmethod
+    def default_stereo(cls, size=(1280, 720), baseline_m=1.0, angle_deg=25.0):
+        """Creates a reasonable default 2-camera rig for plug-and-play multi-cam."""
+        K0, dist0 = default_intrinsics(size)
+        K1, dist1 = default_intrinsics(size)
+        half_ang = np.radians(angle_deg / 2)
+        R0 = np.array([[np.cos(half_ang), 0, -np.sin(half_ang)], [0, 1, 0], [np.sin(half_ang), 0, np.cos(half_ang)]])
+        t0 = np.array([-baseline_m / 2, 0.0, 0.0])
+        R1 = np.array([[np.cos(-half_ang), 0, -np.sin(-half_ang)], [0, 1, 0], [np.sin(-half_ang), 0, np.cos(-half_ang)]])
+        t1 = np.array([baseline_m / 2, 0.0, 0.0])
+        cam0 = CameraModel("CAM_0", K0, dist0, R0, t0, size)
+        cam1 = CameraModel("CAM_1", K1, dist1, R1, t1, size)
+        return cls([cam0, cam1], rms={"reproj": 1.0})
+
+    @classmethod
+    def default_array(cls, n_cameras, size=(1280, 720), radius_m=2.0):
+        """Creates a default N-camera rig arranged in a semicircle around the capture volume.
+
+        Works with any *n_cameras* >= 2.  For 2, this is equivalent to *default_stereo*.
+        For N > 2, cameras are evenly spaced along a 180-degree arc at distance *radius_m*
+        from the subject, all facing the origin.
+        """
+        cameras = []
+        for i in range(n_cameras):
+            # Spread cameras from -90 to +90 degrees (semicircle)
+            angle = np.radians(-90.0 + 180.0 * i / max(n_cameras - 1, 1))
+            K, dist = default_intrinsics(size)
+            # Camera position on the arc
+            cx = radius_m * np.cos(angle)
+            cz = radius_m * np.sin(angle)
+            pos = np.array([cx, 0.0, cz])
+            # Camera looks at origin
+            fwd = -pos / (np.linalg.norm(pos) + 1e-9)
+            up = np.array([0.0, 1.0, 0.0])
+            right = np.cross(fwd, up)
+            right /= (np.linalg.norm(right) + 1e-9)
+            up2 = np.cross(right, fwd)
+            R = np.stack([right, -up2, fwd], axis=0)  # camera convention
+            t = -R @ pos
+            cameras.append(CameraModel(f"CAM_{i}", K, dist, R, t, size))
+        return cls(cameras, rms={"reproj": 1.0})
+
 
 # ----------------------------------------------------------------------------------------------
 def board_points(cols, rows, square_m):
