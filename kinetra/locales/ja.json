@@ -258,5 +258,15 @@
   "cam.title": "Camera Setup Manager",
   "chk.iphone": "iPhone TrueDepth / LiDAR (Port 49983)",
   "chk.iphone_tip": "Open Live Link Face or iFacialMocap on iPhone for micron-precision face and wrinkle capture.",
-  "stream.checking": "Checking client status..."
+  "stream.checking": "Checking client status...",
+  "guide.title": "Unreal Engine 5 & Blender 配信ガイド",
+  "guide.intro": "ゲームエンジンおよびDCCツール向けのリアルタイム配信統合。",
+  "guide.s1_title": "1. Unreal Engine 5 — 全身トラッキング (VMC):",
+  "guide.s1_desc": "形式を 'vmc' (ポート 39539) に設定してください。全身ストリーミングには UE5 プロジェクトの Plugins フォルダに EVMC4U プラグインが必要です。注: 'ue5_livelink' は MetaHuman の顔専用です。",
+  "guide.s2_title": "2. Unreal Engine 5 — MetaHuman & 顔 (LiveLink):",
+  "guide.s2_desc": "'ue5_livelink' (ポート 11111) を選択してください。UE5 内蔵の Apple ARKit LiveLink ソース経由で直接接続されます。外部プラグインは不要です。",
+  "guide.s3_title": "3. Blender — リアルタイム配信:",
+  "guide.s3_desc": "Blender で packaging/kinetra_blender_receiver.py をインストールしてください (または VMC を使用)。アーマチュアを選択し 'Start Receiver' を押して配信を開始します。",
+  "guide.btn_download": "EVMC4U をダウンロード",
+  "guide.btn_blender": "アドオンフォルダを開く"
 }

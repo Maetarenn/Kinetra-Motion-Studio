@@ -258,5 +258,15 @@
   "cam.title": "Camera Setup Manager",
   "chk.iphone": "iPhone TrueDepth / LiDAR (Port 49983)",
   "chk.iphone_tip": "Open Live Link Face or iFacialMocap on iPhone for micron-precision face and wrinkle capture.",
-  "stream.checking": "Checking client status..."
+  "stream.checking": "Checking client status...",
+  "guide.title": "Unreal Engine 5 与 Blender 推流指南",
+  "guide.intro": "面向游戏引擎与DCC工具的实时推流集成。",
+  "guide.s1_title": "1. Unreal Engine 5 — 全身动作捕捉 (VMC)：",
+  "guide.s1_desc": "请将格式设为 'vmc' (端口 39539)。全身骨骼推流需要在 UE5 项目的 Plugins 目录下安装 EVMC4U 插件。注意：'ue5_livelink' 仅适用于 MetaHuman 面部。",
+  "guide.s2_title": "2. Unreal Engine 5 — MetaHuman 与面部 (LiveLink)：",
+  "guide.s2_desc": "请选择 'ue5_livelink' (端口 11111)。通过 UE5 内置的 Apple ARKit LiveLink 源直接连接，无需安装任何外部插件。",
+  "guide.s3_title": "3. Blender — 实时推流：",
+  "guide.s3_desc": "在 Blender 中安装 packaging/kinetra_blender_receiver.py (或使用 VMC)。选中骨架，点击 'Start Receiver' 并在 Kinetra 中开启推流。",
+  "guide.btn_download": "下载 EVMC4U",
+  "guide.btn_blender": "打开插件目录"
 }

@@ -258,5 +258,15 @@
   "cam.title": "Camera Setup Manager",
   "chk.iphone": "iPhone TrueDepth / LiDAR (Port 49983)",
   "chk.iphone_tip": "Open Live Link Face or iFacialMocap on iPhone for micron-precision face and wrinkle capture.",
-  "stream.checking": "Checking client status..."
+  "stream.checking": "Checking client status...",
+  "guide.title": "Unreal Engine 5 & Blender Streaming-Leitfaden",
+  "guide.intro": "Echtzeit-Streaming-Integration für Game-Engines und DCC-Tools.",
+  "guide.s1_title": "1. Unreal Engine 5 — Ganzkörper-Tracking (VMC):",
+  "guide.s1_desc": "Format auf 'vmc' (Port 39539) setzen. Ganzkörper-Streaming erfordert das EVMC4U-Plugin im Plugins-Ordner Ihres UE5-Projekts. Hinweis: 'ue5_livelink' ist nur für MetaHuman-Gesichter.",
+  "guide.s2_title": "2. Unreal Engine 5 — MetaHuman & Gesicht (LiveLink):",
+  "guide.s2_desc": "Format auf 'ue5_livelink' (Port 11111) setzen. Verbindet sich direkt über die integrierte Apple ARKit LiveLink-Quelle in UE5. Keine externen Plugins erforderlich.",
+  "guide.s3_title": "3. Blender — Echtzeit-Streaming:",
+  "guide.s3_desc": "Installieren Sie packaging/kinetra_blender_receiver.py in Blender (oder VMC). Armature auswählen, 'Start Receiver' klicken und Stream starten.",
+  "guide.btn_download": "EVMC4U herunterladen",
+  "guide.btn_blender": "Addon-Ordner öffnen"
 }

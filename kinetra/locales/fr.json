@@ -258,5 +258,15 @@
   "cam.title": "Camera Setup Manager",
   "chk.iphone": "iPhone TrueDepth / LiDAR (Port 49983)",
   "chk.iphone_tip": "Open Live Link Face or iFacialMocap on iPhone for micron-precision face and wrinkle capture.",
-  "stream.checking": "Checking client status..."
+  "stream.checking": "Checking client status...",
+  "guide.title": "Guide de diffusion Unreal Engine 5 et Blender",
+  "guide.intro": "Intégration de diffusion en temps réel pour moteurs de jeu et outils DCC.",
+  "guide.s1_title": "1. Unreal Engine 5 — Suivi du corps entier (VMC) :",
+  "guide.s1_desc": "Définissez le format sur 'vmc' (Port 39539). La diffusion du corps entier nécessite le plugin EVMC4U dans le dossier Plugins de votre projet UE5. Remarque : 'ue5_livelink' est réservé au visage MetaHuman.",
+  "guide.s2_title": "2. Unreal Engine 5 — MetaHuman et visage (LiveLink) :",
+  "guide.s2_desc": "Sélectionnez 'ue5_livelink' (Port 11111). Se connecte directement via la source Apple ARKit intégrée à UE5. Aucun plugin externe requis.",
+  "guide.s3_title": "3. Blender — Diffusion en temps réel :",
+  "guide.s3_desc": "Installez packaging/kinetra_blender_receiver.py dans Blender (ou VMC). Sélectionnez l'armature, cliquez sur 'Start Receiver' et lancez la diffusion.",
+  "guide.btn_download": "Télécharger EVMC4U",
+  "guide.btn_blender": "Ouvrir dossier addon"
 }

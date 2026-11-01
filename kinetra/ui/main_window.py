@@ -165,12 +165,6 @@ class _Job(QtCore.QThread):
 
 
 
-class StreamGuideDialog(QtWidgets.QDialog):
-
-    """Modern streaming guide dialog for Unreal Engine 5 (LiveLink & VMC) and Blender."""
-
-
-
     def __init__(self, parent=None):
 
         super().__init__(parent)
@@ -3091,7 +3085,103 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _show_stream_guide(self):
 
-        dlg = StreamGuideDialog(self)
 
-        dlg.exec()
+
+        box = QtWidgets.QMessageBox(self)
+
+
+
+        box.setWindowTitle(t("guide.title"))
+
+
+
+        box.setIcon(QtWidgets.QMessageBox.Information)
+
+
+
+        msg = (
+
+
+
+            f"<h3>{t('guide.title')}</h3>"
+
+
+
+            f"<p style='color:#94A3B8;'>{t('guide.intro')}</p>"
+
+
+
+            f"<p><b>{t('guide.s1_title')}</b><br>"
+
+
+
+            f"  {t('guide.s1_desc')}</p>"
+
+
+
+            f"<p><b>{t('guide.s2_title')}</b><br>"
+
+
+
+            f"  {t('guide.s2_desc')}</p>"
+
+
+
+            f"<p><b>{t('guide.s3_title')}</b><br>"
+
+
+
+            f"  {t('guide.s3_desc')}</p>"
+
+
+
+        )
+
+
+
+        box.setText(msg)
+
+
+
+        btn_dl = box.addButton(t("guide.btn_download"), QtWidgets.QMessageBox.ActionRole)
+
+
+
+        btn_dl.setStyleSheet("background: #0284C7; color: white; font-weight: bold; padding: 6px 14px; border-radius: 4px;")
+
+
+
+        btn_blender = box.addButton(t("guide.btn_blender"), QtWidgets.QMessageBox.ActionRole)
+
+
+
+        btn_blender.setStyleSheet("background: #334155; color: #E2E8F0; padding: 6px 12px; border-radius: 4px;")
+
+
+
+        box.addButton(QtWidgets.QMessageBox.Close)
+
+
+
+        box.exec()
+
+
+
+        if box.clickedButton() == btn_dl:
+
+
+
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/gpsnme99/EVMC4U/releases"))
+
+
+
+        elif box.clickedButton() == btn_blender:
+
+
+
+            pkg_path = str(Path(__file__).resolve().parent.parent.parent / "packaging")
+
+
+
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(pkg_path))
 
