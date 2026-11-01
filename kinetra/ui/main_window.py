@@ -165,6 +165,440 @@ class _Job(QtCore.QThread):
 
 
 
+class StreamGuideDialog(QtWidgets.QDialog):
+
+    """Modern streaming guide dialog for Unreal Engine 5 (LiveLink & VMC) and Blender."""
+
+
+
+    def __init__(self, parent=None):
+
+        super().__init__(parent)
+
+        self.setWindowTitle("Kinetra Live Output Guide - Unreal Engine 5 & Blender")
+
+        self.resize(620, 680)
+
+        self.setStyleSheet("""
+
+            QDialog {
+
+                background-color: #0B1120;
+
+                color: #F1F5F9;
+
+                font-family: 'Segoe UI', -apple-system, sans-serif;
+
+            }
+
+            QScrollArea {
+
+                background: transparent;
+
+                border: none;
+
+            }
+
+            QScrollBar:vertical {
+
+                background: #0F172A;
+
+                width: 8px;
+
+                border-radius: 4px;
+
+            }
+
+            QScrollBar::handle:vertical {
+
+                background: #334155;
+
+                min-height: 20px;
+
+                border-radius: 4px;
+
+            }
+
+            QScrollBar::handle:vertical:hover {
+
+                background: #00F0FF;
+
+            }
+
+        """)
+
+
+
+        layout = QtWidgets.QVBoxLayout(self)
+
+        layout.setContentsMargins(20, 20, 20, 20)
+
+        layout.setSpacing(14)
+
+
+
+        # Title & Subtitle
+
+        title = QtWidgets.QLabel("Unreal Engine 5 & Blender Canlı Bağlantı Rehberi")
+
+        title.setStyleSheet("font-size: 17px; font-weight: bold; color: #00F0FF;")
+
+        subtitle = QtWidgets.QLabel("Kinetra hareket verilerini UE5 ve Blender'a anlık (gecikmesiz) aktarma kılavuzu.")
+
+        subtitle.setStyleSheet("font-size: 12px; color: #94A3B8; margin-bottom: 4px;")
+
+        layout.addWidget(title)
+
+        layout.addWidget(subtitle)
+
+
+
+        # Scroll area
+
+        scroll = QtWidgets.QScrollArea()
+
+        scroll.setWidgetResizable(True)
+
+        container = QtWidgets.QWidget()
+
+        card_lay = QtWidgets.QVBoxLayout(container)
+
+        card_lay.setContentsMargins(0, 0, 10, 0)
+
+        card_lay.setSpacing(14)
+
+
+
+        # Card 1: UE5 Full-Body (VMC)
+
+        c1 = QtWidgets.QFrame()
+
+        c1.setStyleSheet("background: #111C33; border: 1px solid #1E293B; border-radius: 10px; padding: 14px;")
+
+        l1 = QtWidgets.QVBoxLayout(c1)
+
+        l1.setSpacing(10)
+
+
+
+        t1 = QtWidgets.QLabel("1. Unreal Engine 5 — Tam Vücut Animasyonu (Full-Body Mocap)")
+
+        t1.setStyleSheet("font-size: 14px; font-weight: bold; color: #38BDF8; border: none;")
+
+
+
+        desc1 = QtWidgets.QLabel(
+
+            "<b>Format:</b> <code style='color:#00F0FF; font-size:13px;'>VMC</code> (Varsayılan Port: <b>39539</b>)<br><br>"
+
+            "Unreal Engine 5'te tüm vücut hareketlerinizi (kollar, bacaklar, omurga, eğilme vb.) "
+
+            "karakterinize anlık aktarmak için formatı <b>VMC</b> seçmelisiniz.<br><br>"
+
+            "UE5'in bu VMC verilerini yakalayıp karaktere bağlaması için dünyaca ünlü, "
+
+            "<b>%100 ücretsiz ve açık kaynaklı EVMC4U eklentisi</b> kullanılır.<br>"
+
+            "<span style='color:#F59E0B;'>⚠️ <b>Önemli Not:</b> 'ue5_livelink' formatı sadece MetaHuman yüzü içindir; "
+
+            "tam vücut iskelet yayını için VMC formatı kullanılmalıdır.</span>"
+
+        )
+
+        desc1.setWordWrap(True)
+
+        desc1.setStyleSheet("font-size: 12px; color: #CBD5E1; border: none; line-height: 1.4;")
+
+
+
+        steps1 = QtWidgets.QLabel(
+
+            "<b>Kurulum Adımları (Tek Seferlik):</b><br>"
+
+            "1. Aşağıdaki mavi butona basıp ücretsiz <b>EVMC4U</b> eklentisini indirin.<br>"
+
+            "2. Zipten çıkan klasörü UE5 projenizin <code>Plugins</code> klasörüne atın.<br>"
+
+            "3. Kinetra'da formatı <b>VMC</b> yapıp <b>YAYINLA</b> butonuna basın.<br>"
+
+            "4. UE5'te karakterinizi seçip portu <b>39539</b> olarak bağlayın — anında hareket edecektir!"
+
+        )
+
+        steps1.setWordWrap(True)
+
+        steps1.setStyleSheet("font-size: 11px; color: #94A3B8; border: none; background: #080D1A; padding: 10px; border-radius: 6px;")
+
+
+
+        btn_evmc4u = QtWidgets.QPushButton("EVMC4U İndir (GitHub — %100 Ücretsiz)")
+
+        btn_evmc4u.setCursor(QtCore.Qt.PointingHandCursor)
+
+        btn_evmc4u.setStyleSheet("""
+
+            QPushButton {
+
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0284C7, stop:1 #2563EB);
+
+                color: #FFFFFF;
+
+                font-weight: bold;
+
+                font-size: 13px;
+
+                padding: 10px 18px;
+
+                border-radius: 6px;
+
+                border: 1px solid #38BDF8;
+
+            }
+
+            QPushButton:hover {
+
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0EA5E9, stop:1 #3B82F6);
+
+                border: 1px solid #00F0FF;
+
+            }
+
+        """)
+
+        btn_evmc4u.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/gpsnme99/EVMC4U/releases")))
+
+
+
+        l1.addWidget(t1)
+
+        l1.addWidget(desc1)
+
+        l1.addWidget(steps1)
+
+        l1.addWidget(btn_evmc4u)
+
+        card_lay.addWidget(c1)
+
+
+
+        # Card 2: UE5 MetaHuman Face (ARKit LiveLink)
+
+        c2 = QtWidgets.QFrame()
+
+        c2.setStyleSheet("background: #111C33; border: 1px solid #1E293B; border-radius: 10px; padding: 14px;")
+
+        l2 = QtWidgets.QVBoxLayout(c2)
+
+        l2.setSpacing(10)
+
+
+
+        t2 = QtWidgets.QLabel("2. Unreal Engine 5 — MetaHuman & Yüz Mimikleri (Apple ARKit)")
+
+        t2.setStyleSheet("font-size: 14px; font-weight: bold; color: #FBBF24; border: none;")
+
+
+
+        desc2 = QtWidgets.QLabel(
+
+            "<b>Format:</b> <code style='color:#FBBF24; font-size:13px;'>ue5_livelink</code> (Port: <b>11111</b>)<br><br>"
+
+            "Bu format <b>MetaHuman yüz, göz ve dudak animasyonları</b> içindir. Unreal Engine 5'in içinde "
+
+            "zaten hazır bulunan resmi <b>Apple ARKit</b> LiveLink kaynağıyla doğrudan konuşur. "
+
+            "Harici hiçbir eklenti kurmanıza gerek yoktur.<br>"
+
+            "52 ARKit blendshape ve dinamik mikron kırışıklıklar tam zamanlı MetaHuman'a akar."
+
+        )
+
+        desc2.setWordWrap(True)
+
+        desc2.setStyleSheet("font-size: 12px; color: #CBD5E1; border: none; line-height: 1.4;")
+
+
+
+        steps2 = QtWidgets.QLabel(
+
+            "<b>Kullanım Adımları:</b><br>"
+
+            "1. UE5'te <code>Window -> Virtual Production -> Live Link</code> penceresini açın.<br>"
+
+            "2. <code>+ Source -> Apple ARKit</code> ekleyin (Port: <b>11111</b>).<br>"
+
+            "3. MetaHuman Face Blueprint'inizde LiveLink Pose nodunu bağlayın."
+
+        )
+
+        steps2.setWordWrap(True)
+
+        steps2.setStyleSheet("font-size: 11px; color: #94A3B8; border: none; background: #080D1A; padding: 10px; border-radius: 6px;")
+
+
+
+        l2.addWidget(t2)
+
+        l2.addWidget(desc2)
+
+        l2.addWidget(steps2)
+
+        card_lay.addWidget(c2)
+
+
+
+        # Card 3: Blender (Addon & VMC)
+
+        c3 = QtWidgets.QFrame()
+
+        c3.setStyleSheet("background: #111C33; border: 1px solid #1E293B; border-radius: 10px; padding: 14px;")
+
+        l3 = QtWidgets.QVBoxLayout(c3)
+
+        l3.setSpacing(10)
+
+
+
+        t3 = QtWidgets.QLabel("3. Blender — Gerçek Zamanlı Animasyon (Hazır Eklenti)")
+
+        t3.setStyleSheet("font-size: 14px; font-weight: bold; color: #F97316; border: none;")
+
+
+
+        desc3 = QtWidgets.QLabel(
+
+            "<b>Format:</b> <code style='color:#F97316; font-size:13px;'>VMC</code> veya <code>JSON</code> (Port: <b>9000 / 39539</b>)<br><br>"
+
+            "Blender'daki herhangi bir 3D karakteri anlık oynatmak için Kinetra klasörünüzde hazır bulunan "
+
+            "eklentiyi kullanabilirsiniz. Dışarıdan bir şey indirmenize gerek yoktur."
+
+        )
+
+        desc3.setWordWrap(True)
+
+        desc3.setStyleSheet("font-size: 12px; color: #CBD5E1; border: none; line-height: 1.4;")
+
+
+
+        steps3 = QtWidgets.QLabel(
+
+            "<b>Kullanım Adımları:</b><br>"
+
+            "1. Blender'da <code>Edit -> Preferences -> Add-ons -> Install</code> diyerek "
+
+            "<code>packaging/kinetra_blender_receiver.py</code> dosyasını seçin.<br>"
+
+            "2. Sahnedeki karakterinizin iskeletini (Armature) seçip <b>'Start Receiver'</b> deyin.<br>"
+
+            "3. Kinetra'da 'YAYINLA' butonuna basın; karakteriniz anında canlanacaktır!"
+
+        )
+
+        steps3.setWordWrap(True)
+
+        steps3.setStyleSheet("font-size: 11px; color: #94A3B8; border: none; background: #080D1A; padding: 10px; border-radius: 6px;")
+
+
+
+        btn_blender = QtWidgets.QPushButton("📁 Blender Eklenti Klasörünü Aç (packaging/)")
+
+        btn_blender.setCursor(QtCore.Qt.PointingHandCursor)
+
+        btn_blender.setStyleSheet("""
+
+            QPushButton {
+
+                background: #1E293B;
+
+                color: #CBD5E1;
+
+                font-size: 12px;
+
+                padding: 8px 14px;
+
+                border-radius: 6px;
+
+                border: 1px solid #475569;
+
+            }
+
+            QPushButton:hover {
+
+                background: #334155;
+
+                color: #FFFFFF;
+
+                border: 1px solid #94A3B8;
+
+            }
+
+        """)
+
+        packaging_path = str(Path(__file__).resolve().parent.parent.parent / "packaging")
+
+        btn_blender.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl.fromLocalFile(packaging_path)))
+
+
+
+        l3.addWidget(t3)
+
+        l3.addWidget(desc3)
+
+        l3.addWidget(steps3)
+
+        l3.addWidget(btn_blender)
+
+        card_lay.addWidget(c3)
+
+
+
+        scroll.setWidget(container)
+
+        layout.addWidget(scroll)
+
+
+
+        # Close button
+
+        btn_close = QtWidgets.QPushButton("Kapat")
+
+        btn_close.setCursor(QtCore.Qt.PointingHandCursor)
+
+        btn_close.setStyleSheet("""
+
+            QPushButton {
+
+                background: #1E293B;
+
+                color: #94A3B8;
+
+                font-weight: bold;
+
+                font-size: 13px;
+
+                padding: 10px;
+
+                border-radius: 6px;
+
+                border: 1px solid #334155;
+
+            }
+
+            QPushButton:hover {
+
+                background: #334155;
+
+                color: #FFFFFF;
+
+            }
+
+        """)
+
+        btn_close.clicked.connect(self.accept)
+
+        layout.addWidget(btn_close)
+
 class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, settings):
@@ -2655,47 +3089,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.lbl_client_status.setStyleSheet("color: #94A3B8; font-size: 11px;")
 
-
-
     def _show_stream_guide(self):
 
-        box = QtWidgets.QMessageBox(self)
+        dlg = StreamGuideDialog(self)
 
-        box.setWindowTitle("Unreal Engine 5 & Blender Canlı Bağlantı Rehberi")
-
-        msg = (
-
-            "<h3>Kinetra Canli Yayin Entegrasyonu</h3>"
-
-            "<p><b>1. Blender İle Canlı Kullanım (VMC / UDP):</b><br>"
-
-            "• Kinetra klasöründeki <code>packaging/kinetra_blender_receiver.py</code> scriptini Blender Scripting sekmesine yapıştırıp <b>'▶ Run Script'</b>e basın.<br>"
-
-            "• Blender'daki karakterinizin iskeletini (Armature) seçin.<br>"
-
-            "• Kinetra'da 'Canlı Yayın'ı açın; karakteriniz anında canlanacaktır!</p>"
-
-            "<p><b>2. Unreal Engine 5 İle Canlı Kullanım (LiveLink):</b><br>"
-
-            "• Format olarak <b>'ue5_livelink'</b> (Port 11111) seçin.<br>"
-
-            "• UE5'te <i>Window -> Virtual Production -> Live Link</i> penceresini açın.<br>"
-
-            "• <i>+ Source -> LiveLink UDP</i> ekleyin (Konu: <b>Kinetra_Actor</b>).<br>"
-
-            "• MetaHuman Blueprint'inizde LiveLink Pose nodunu bağlayın; 52 ARKit mimiği ve dinamik kırışıklıklar tam zamanlı akacaktır!</p>"
-
-            "<p><b>3. iPhone TrueDepth / LiDAR:</b><br>"
-
-            "• iPhone'unuzda <i>Live Link Face</i> veya <i>iFacialMocap</i> açıp PC'nin yerel IP adresini girin.<br>"
-
-            "• Kinetra mikron seviyesinde derinlik ve anlık kırışıklık haritası üretecektir.</p>"
-
-        )
-
-        box.setText(msg)
-
-        box.exec()
-
-
+        dlg.exec()
 
