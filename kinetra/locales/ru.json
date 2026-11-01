@@ -262,11 +262,11 @@
   "guide.title": "Руководство по трансляции в Unreal Engine 5 и Blender",
   "guide.intro": "Интеграция прямой трансляции в игровые движки и 3D-пакеты.",
   "guide.s1_title": "1. Unreal Engine 5 — Захват всего тела (VMC):",
-  "guide.s1_desc": "Выберите формат 'vmc' (Порт 39539). Для трансляции тела требуется плагин EVMC4U в папке Plugins проекта UE5. Примечание: 'ue5_livelink' предназначен только для лица MetaHuman.",
+  "guide.s1_desc": "Выберите формат 'vmc' (Порт 39539). Для трансляции тела в UE5 используется плагин VRM4U (поддержка UE 5.0–5.5). Примечание: 'ue5_livelink' предназначен только для лица MetaHuman.",
   "guide.s2_title": "2. Unreal Engine 5 — MetaHuman и лицо (LiveLink):",
   "guide.s2_desc": "Выберите 'ue5_livelink' (Порт 11111). Подключается напрямую через встроенный источник Apple ARKit LiveLink в UE5. Внешние плагины не требуются.",
   "guide.s3_title": "3. Blender — Прямая трансляция:",
   "guide.s3_desc": "Установите packaging/kinetra_blender_receiver.py в Blender (или VMC). Выберите арматуру, нажмите 'Start Receiver' и запустите поток в Kinetra.",
-  "guide.btn_download": "Скачать EVMC4U",
+  "guide.btn_download": "Скачать VRM4U",
   "guide.btn_blender": "Папка аддона Blender"
 }

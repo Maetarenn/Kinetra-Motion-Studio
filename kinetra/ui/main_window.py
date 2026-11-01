@@ -359,7 +359,7 @@ class _Job(QtCore.QThread):
 
         """)
 
-        btn_evmc4u.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/gpsnme99/EVMC4U/releases")))
+        btn_evmc4u.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/ruyo/VRM4U/releases")))
 
 
 
@@ -3171,7 +3171,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 
-            QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/gpsnme99/EVMC4U/releases"))
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/ruyo/VRM4U/releases"))
 
 
 

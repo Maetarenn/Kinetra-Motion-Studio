@@ -262,11 +262,11 @@
   "guide.title": "Unreal Engine 5 ve Blender Canlı Bağlantı Rehberi",
   "guide.intro": "Oyun motorları ve 3D yazılımlar için gerçek zamanlı canlı yayın entegrasyonu.",
   "guide.s1_title": "1. Unreal Engine 5 — Tam Vücut Yayını (VMC):",
-  "guide.s1_desc": "Formatı 'vmc' (Port 39539) olarak seçin. Tam vücut iskelet yayını için UE5 projenizin Plugins klasörüne EVMC4U eklentisini kurmalısınız. Not: 'ue5_livelink' formatı sadece MetaHuman yüzü içindir.",
+  "guide.s1_desc": "Formatı 'vmc' (Port 39539) olarak seçin. UE5'te tam vücut iskelet yayını dinlemek için projenize VRM4U eklentisini (UE 5.0 - 5.5 uyumlu) kurmalısınız. Not: 'ue5_livelink' formatı sadece MetaHuman yüzü içindir.",
   "guide.s2_title": "2. Unreal Engine 5 — MetaHuman ve Yüz (LiveLink):",
   "guide.s2_desc": "Formatı 'ue5_livelink' (Port 11111) seçin. UE5'in yerleşik Apple ARKit LiveLink kaynağıyla doğrudan bağlanır. 52 ARKit mimik ve kırışıklık için harici eklenti gerekmez.",
   "guide.s3_title": "3. Blender — Canlı Kullanım:",
   "guide.s3_desc": "Blender'da packaging/kinetra_blender_receiver.py eklentisini kurun (veya VMC kullanın). İskeleti seçip 'Start Receiver' deyin ve Kinetra'da yayını açın.",
-  "guide.btn_download": "EVMC4U İndir",
+  "guide.btn_download": "VRM4U İndir",
   "guide.btn_blender": "Eklenti Klasörünü Aç"
 }

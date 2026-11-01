@@ -262,11 +262,11 @@
   "guide.title": "Unreal Engine 5 & Blender Streaming Guide",
   "guide.intro": "Real-time streaming integration for game engines and DCC tools.",
   "guide.s1_title": "1. Unreal Engine 5 — Full-Body Tracking (VMC):",
-  "guide.s1_desc": "Set format to 'vmc' (Port 39539). Full-body skeletal streaming requires the EVMC4U plugin installed in your UE5 project Plugins folder. Note: 'ue5_livelink' is for MetaHuman face only.",
+  "guide.s1_desc": "Set format to 'vmc' (Port 39539). Full-body skeletal streaming in UE5 uses the VRM4U plugin (supports UE 5.0 through 5.5). Extract the plugin into your UE5 project Plugins folder. Note: 'ue5_livelink' is for MetaHuman face only.",
   "guide.s2_title": "2. Unreal Engine 5 — MetaHuman & Face (LiveLink):",
   "guide.s2_desc": "Set format to 'ue5_livelink' (Port 11111). Connects directly via UE5 built-in Apple ARKit LiveLink source. No external plugins required for 52 ARKit blendshapes and wrinkles.",
   "guide.s3_title": "3. Blender — Real-Time Streaming:",
   "guide.s3_desc": "Install packaging/kinetra_blender_receiver.py in Blender (or use VMC). Select your armature, click 'Start Receiver', and enable stream in Kinetra.",
-  "guide.btn_download": "Download EVMC4U",
+  "guide.btn_download": "Download VRM4U",
   "guide.btn_blender": "Open Addon Folder"
 }
